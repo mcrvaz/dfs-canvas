@@ -5,12 +5,22 @@
     <meta charset="utf-8">
 
     <title>Busca em profundidade</title>
-    <!--<link rel="stylesheet" href="style.css">-->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <canvas id="main-canvas">
-    </canvas>
+    <canvas id="main-canvas"></canvas>
+
+    <div id="size-selector">
+        <input type="radio" name="nodes" value="10" checked> 10
+        <input type="radio" name="nodes" value="50"> 50
+        <input type="radio" name="nodes" value="100"> 100
+        <input type="radio" name="nodes" value="1000"> 1000
+    </div>
+    <div>
+        <input id="additional-nodes" type="number" min="0" placeholder="Arestas adicionais">
+        <button id="generate-btn">Gerar</button>
+    </div>
 
     <script src="dfs.js"></script>
 </body>

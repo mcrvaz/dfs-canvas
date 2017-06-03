@@ -127,6 +127,7 @@ class Main {
         * @param {number} maxIndex - Maximum index to be searched in the node array.
     */
     generateRandomLink(nodes, currentNode, maxIndex) {
+        maxIndex = maxIndex > nodes.length ? nodes.length : maxIndex;
         let index = this.getRandomInt(0, maxIndex);
         currentNode.link(this.canvas, this.context, nodes[index]);
     }
@@ -137,9 +138,9 @@ class Main {
         * @param {Node} amount - Amount of random links to be generated.
     */
     generateRandomLinks(nodes, amount){
-        for(let i = 0; i < amount; i++){
-            let current = nodes[Math.floor(Math.random() * i)];
-            let next = nodes[Math.floor(Math.random() * i)];
+        for(let i = 0; i < Number(amount); i++){
+            let current = nodes[Math.floor(Math.random() * nodes.length)];
+            let next = nodes[Math.floor(Math.random() * nodes.length)];
             if(current.links.indexOf(next) == -1){
                 current.link(this.canvas, this.context, next);
             }
@@ -148,10 +149,29 @@ class Main {
 
 }
 
-let canvas = document.getElementById("main-canvas");
-let qttNodes = 10;
-let qttLinks = 3; //additional links
-let main = new Main(canvas, qttNodes, qttLinks);
-main.run();
+class Interface {
+    static setButtonListener(callback){
+        document.getElementById("generate-btn").addEventListener("click", callback);
+    }
+
+    static get canvas(){
+        return document.getElementById("main-canvas");
+    }
+
+    static get qttNodes() {
+        return document.querySelector('input[name="nodes"]:checked').value;
+    }
+
+    static get qttLinks() {
+        return document.getElementById("additional-nodes").value;
+    }
+}
+
+function exec(){
+    let main = new Main(Interface.canvas, Interface.qttNodes, Interface.qttLinks);
+    main.run();
+}
+Interface.setButtonListener(exec);
+exec();
 
 })();
