@@ -4,13 +4,14 @@
     * Represents a node.
     * @constructor
     * @param {number} x - The x position of the node.
-    * @param {number} y - The y position of the book.
-    * @param {number} radius - The radius of the book.
+    * @param {number} y - The y position of the node.
+    * @param {number} radius - The radius of the node.
 */
 class Node {
-    constructor(x, y, radius){
+    constructor(x, y, radius = 8){
         this.x = x;
         this.y = y;
+        this.radius = radius;
         this.links = [];
     }
 
@@ -23,16 +24,15 @@ class Node {
         * @param {CanvasRenderingContext2D} context - The context to render.
         * @param {string} color - The color of the node to be rendered.
     */
-            draw(canvas, context, color){
-                let radius = 5;
-                context.beginPath();
-                context.arc(this.x * canvas.width, this.y * canvas.height, radius, 0, 2 * Math.PI, false);
-                context.fillStyle = color;
-                context.fill();
-                context.lineWidth = 2;
-                context.strokeStyle = 'black';
-                context.stroke();
-            }
+    draw(canvas, context, color){
+        context.beginPath();
+        context.arc(this.x * canvas.width, this.y * canvas.height, this.radius, 0, 2 * Math.PI, false);
+        context.fillStyle = color;
+        context.fill();
+        context.lineWidth = 2;
+        context.strokeStyle = 'black';
+        context.stroke();
+    }
 
     /**
         * Render a link and add the node to each other links array.
@@ -74,6 +74,7 @@ class Main {
         this.canvas.width = 1350;
         this.canvas.height = 400;
         this.qttNodes = qttNodes;
+        this.interval = null;
         this.nodes = this.generateConnectedGraph(this.qttNodes);
         this.generateRandomLinks(this.nodes, qttLinks);
     }
@@ -84,6 +85,7 @@ class Main {
     run(){
         this.initialDraw();
         this.depthFirstSearch();
+        this.paintNodes(this.nodes);
     }
 
     /**
@@ -94,6 +96,14 @@ class Main {
     }
 
     depthFirstSearch(){}
+
+    paintNodes(nodes){
+        let i = nodes.length;
+        let interval = setInterval(() => {
+            if(i--) nodes[i].draw(this.canvas, this.context, Node.ACTIVE);
+            else clearInterval(interval);
+        }, 200);
+    }
 
     /**
         * Generates a connected graph.
@@ -171,6 +181,7 @@ function exec(){
     let main = new Main(Interface.canvas, Interface.qttNodes, Interface.qttLinks);
     main.run();
 }
+
 Interface.setButtonListener(exec);
 exec();
 
