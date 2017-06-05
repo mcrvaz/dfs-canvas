@@ -17,16 +17,20 @@ class Node {
 
     static get ACTIVE() { return "green" };
     static get INACTIVE() { return "white" };
-
+    static get ACTIVE_LINK() { return "blue" };
+    static get INACTIVE_LINK() { return "black" };
     /**
         * Draw the graph in the canvas.
         * @param {HTMLCanvasElement} canvas - The main canvas.
         * @param {CanvasRenderingContext2D} context - The context to render.
         * @param {string} color - The color of the node to be rendered.
     */
-    draw(canvas, context, color){
+    draw(canvas, context, color = Node.ACTIVE){
         context.beginPath();
-        context.arc(this.x * canvas.width, this.y * canvas.height, this.radius, 0, 2 * Math.PI, false);
+        context.arc(
+            this.x * canvas.width, this.y * canvas.height,
+            this.radius, 0, 2 * Math.PI, false
+        );
         context.fillStyle = color;
         context.fill();
         context.lineWidth = 2;
@@ -39,11 +43,13 @@ class Node {
         * @param {HTMLCanvasElement} canvas - The main canvas.
         * @param {CanvasRenderingContext2D} context - The context to render.
         * @param {number} node - Node to be linked.
+        * @param {string} color - Color of the link.
     */
-    link(canvas, context, node){
+    link(canvas, context, node, color = Node.INACTIVE_LINK){
         context.beginPath();
         context.moveTo(this.x * canvas.width, this.y * canvas.height);
         context.lineTo(node.x * canvas.width, node.y * canvas.height);
+        context.strokeStyle = color;
         context.stroke();
         this.links.push(node);
         node.links.push(node);
@@ -55,68 +61,63 @@ class Node {
         * @returns {number} - Distance between the nodes.
     */
     getDistance(node){
-        return Math.sqrt(Math.pow((this.x - node.x),2) + Math.pow((this.y - node.y),2));
+        if(this.links.indexOf(node) != -1)
+            return Math.sqrt(Math.pow((this.x - node.x),2) + Math.pow((this.y - node.y),2));
+        return Number.POSITIVE_INFINITY;
     }
 }
 
 /**
     * Main class for executing the depth first search.
-    * This renders a connected graph with zero or more additional links.
     * @constructor
     * @param {HTMLCanvasElement} canvas - The main canvas.
+    * @param {CanvasRenderingContext2D} context - The context to render.
     * @param {number} qttNodes - The amount of nodes to render.
     * @param {number} qttLinks - The amount of additional links to render.
 */
-class Main {
-    constructor(canvas, qttNodes, qttLinks){
+class GraphRenderer {
+    constructor(canvas, context, qttNodes, qttLinks){
         clearInterval(window.interval);
         this.canvas = canvas;
-        this.context = canvas.getContext("2d");
-        this.canvas.width = 1350;
-        this.canvas.height = 400;
+        this.context = context;
         this.qttNodes = qttNodes;
-        this.nodes = this.generateConnectedGraph(this.qttNodes);
-        this.generateRandomLinks(this.nodes, qttLinks);
-    }
-
-    /**
-        * Runs the application, drawing the graph and executing DFS.
-    */
-    run(){
-        this.initialDraw();
-        this.depthFirstSearch();
-        this.paintNodes(this.nodes);
+        this.qttLinks =  qttLinks;
     }
 
     /**
         * Renders the nodes in the canvas.
     */
-    initialDraw() {
-        this.nodes.forEach((n) => { n.draw(this.canvas, this.context, Node.INACTIVE) });
+    initialDraw(nodes) {
+        nodes.forEach((n) => { n.draw(this.canvas, this.context, Node.INACTIVE) });
     }
 
-    depthFirstSearch(){}
-
-    paintNodes(nodes){
+    /**
+        * Redraws the nodes setting their color as active.
+        * @param {Array<Node>} qtt - Nodes to be colored.
+        * @param {number} delay - Delay before coloring the next node.
+    */
+    paintNodes(nodes, delay){
         let i = nodes.length;
         window.interval = setInterval(() => {
             if(i--) nodes[i].draw(this.canvas, this.context, Node.ACTIVE);
             else clearInterval(window.interval);
-        }, 200);
+        }, delay);
     }
 
     /**
         * Generates a connected graph.
         * @param {number} qtt - The amount of nodes in the graph.
+        * @param {number} additionalLinks - The amount of additional links in the graph.
         * @returns {Array<Node>} - The connected graph.
     */
-    generateConnectedGraph(qtt) {
+    generateConnectedGraph(qtt = this.qttNodes, additionalLinks = this.qttLinks) {
         let arr = [];
         for(let i = 0; i < qtt; i++){
             let node = new Node(Math.random(), Math.random());
             arr.push(node);
             this.generateRandomLink(arr, node, i - 1);
         }
+        this.generateRandomLinks(arr, additionalLinks);
         return arr;
     }
 
@@ -128,6 +129,15 @@ class Main {
     */
     getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    /**
+        * Gets a random node from the node array.
+        * @param {Array<Node>} nodes - Array of possible nodes.
+        * @returns {Node} - Random node from the array.
+    */
+    getRandomNode(nodes) {
+        return nodes[this.getRandomInt(0, nodes.length)];
     }
 
     /**
@@ -156,6 +166,38 @@ class Main {
             }
         }
     }
+}
+
+/**
+    * Main class for executing the depth first search.
+    * @constructor
+    * @param {HTMLCanvasElement} canvas - The main canvas.
+    * @param {number} qttNodes - The amount of nodes to render.
+    * @param {number} qttLinks - The amount of additional links to render.
+*/
+class Main {
+    constructor(canvas, qttNodes, qttLinks){
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");
+        this.canvas.width = 1350;
+        this.canvas.height = 400;
+        this.graphRenderer = new GraphRenderer(this.canvas, this.context, qttNodes, qttLinks);
+    }
+
+    /**
+        * Runs the application, drawing the graph and executing DFS.
+    */
+    run(){
+        let nodes = this.graphRenderer.generateConnectedGraph();
+        this.graphRenderer.initialDraw(nodes);
+        this.depthFirstSearch(this.graphRenderer.getRandomNode(nodes), nodes);
+        this.graphRenderer.paintNodes(nodes, 200);
+    }
+
+    /**
+        * Runs a depth first search.
+    */
+    depthFirstSearch(src, nodes){}
 
 }
 
