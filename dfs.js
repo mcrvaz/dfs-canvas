@@ -69,12 +69,12 @@ class Node {
 */
 class Main {
     constructor(canvas, qttNodes, qttLinks){
+        clearInterval(window.interval);
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
         this.canvas.width = 1350;
         this.canvas.height = 400;
         this.qttNodes = qttNodes;
-        this.interval = null;
         this.nodes = this.generateConnectedGraph(this.qttNodes);
         this.generateRandomLinks(this.nodes, qttLinks);
     }
@@ -99,9 +99,9 @@ class Main {
 
     paintNodes(nodes){
         let i = nodes.length;
-        let interval = setInterval(() => {
+        window.interval = setInterval(() => {
             if(i--) nodes[i].draw(this.canvas, this.context, Node.ACTIVE);
-            else clearInterval(interval);
+            else clearInterval(window.interval);
         }, 200);
     }
 
