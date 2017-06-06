@@ -39,20 +39,17 @@ class Node {
     }
 
     /**
-        * Render a link and add the node to each other links array.
-        * @param {HTMLCanvasElement} canvas - The main canvas.
-        * @param {CanvasRenderingContext2D} context - The context to render.
-        * @param {number} node - Node to be linked.
-        * @param {string} color - Color of the link.
+        * Gets the closest nodes to this node.
+        * @param {Array<Node>} nodes - Nodes to be searched.
+        * @param {number} amount - Amount of closest nodes to return.
+        * @return {Array<Node>} - Array containing the closest nodes.
     */
-    link(canvas, context, node, color = Node.INACTIVE_LINK){
-        context.beginPath();
-        context.moveTo(this.x * canvas.width, this.y * canvas.height);
-        context.lineTo(node.x * canvas.width, node.y * canvas.height);
-        context.strokeStyle = color;
-        context.stroke();
-        this.links.push(node);
-        node.links.push(node);
+    getClosest(nodes, amount) {
+        let arr = nodes.slice(); //shallow copy
+        arr = arr.sort((a, b) => this.getDistance(a) > this.getDistance(b) );
+        arr.splice(0, 1); //remove self
+        this.links = arr.slice(0, amount);
+        return this.links;
     }
 
     /**
@@ -80,8 +77,9 @@ class GraphRenderer {
         clearInterval(window.interval);
         this.canvas = canvas;
         this.context = context;
-        this.qttNodes = qttNodes;
-        this.qttLinks =  qttLinks;
+        this.qttNodes = Number(qttNodes);
+        this.qttLinks =  Number(qttLinks);
+        this.k = Math.trunc(Math.log10(this.qttNodes));
     }
 
     /**
@@ -102,6 +100,34 @@ class GraphRenderer {
             if(i--) nodes[i].draw(this.canvas, this.context, Node.ACTIVE);
             else clearInterval(window.interval);
         }, delay);
+    }
+
+    /**
+        * Renders all the links from the node.
+        * @param {number} node - Node to be linked.
+        * @param {string} color - Color of the link.
+    */
+    drawLinks(node, color = Node.INACTIVE_LINK){
+        node.links.forEach((n) => {
+            this.context.beginPath();
+            this.context.moveTo(node.x * this.canvas.width, node.y * this.canvas.height);
+            this.context.lineTo(n.x * this.canvas.width, n.y * this.canvas.height);
+            this.context.strokeStyle = color;
+            this.context.stroke();
+        });
+    }
+
+    /**
+        * Generates a graph with no links.
+        * @param {number} qtt - The amount of nodes in the graph.
+        * @returns {Array<Node>} - The graph.
+    */
+    generateGraph(qtt = this.qttNodes){
+        let arr = Array(Number(qtt));
+        for(let i = 0; i < arr.length; i++){
+            arr[i] = (new Node(Math.random(), Math.random()));
+        }
+        return arr;
     }
 
     /**
@@ -138,6 +164,16 @@ class GraphRenderer {
     */
     getRandomNode(nodes) {
         return nodes[this.getRandomInt(0, nodes.length)];
+    }
+
+    /**
+        * Calculates the closest K nodes for each node in the array.
+        * @param {Array<Node>} nodes - Array of possible nodes.
+        * @returns {Array<Node>} - Nodes with their their closest nodes.
+    */
+    initializeClosestNodes(nodes) {
+        nodes.forEach((n, idx, arr) => n.getClosest(arr, this.k));
+        return nodes;
     }
 
     /**
@@ -188,7 +224,9 @@ class Main {
         * Runs the application, drawing the graph and executing DFS.
     */
     run(){
-        let nodes = this.graphRenderer.generateConnectedGraph();
+        let nodes = this.graphRenderer.generateGraph();
+        this.graphRenderer.initializeClosestNodes(nodes);
+        this.graphRenderer.drawLinks(nodes[0]);
         this.graphRenderer.initialDraw(nodes);
         this.depthFirstSearch(this.graphRenderer.getRandomNode(nodes), nodes);
         this.graphRenderer.paintNodes(nodes, 200);
