@@ -15,6 +15,7 @@ define((require) => {
             this.context = canvas.getContext("2d");
             this.canvas.width = 400;
             this.canvas.height = 400;
+            this.context.clearRect(0, 0, canvas.width, canvas.height);
             this.graphRenderer = new GraphRenderer(this.canvas, this.context, qttNodes, qttLinks);
         }
 
@@ -24,15 +25,30 @@ define((require) => {
         run(){
             let nodes = this.graphRenderer.generateGraph();
             let src = this.graphRenderer.getRandomNode(nodes);
-            let dst = this.graphRenderer.getRandomNode(nodes);
 
             this.graphRenderer.initializeClosestNodes(nodes);
             this.graphRenderer.initialDraw(nodes);
 
             this.graphRenderer.paintNode(src, 0, Node.SOURCE);
-            this.graphRenderer.paintNode(dst, 0, Node.DESTINATION);
+
+            let visited = this.depthFirstSearch(src, nodes, []);
+            this.graphRenderer.paintLinks(visited, false, 500);
         }
 
+        depthFirstSearch(src, nodes, visited, parent){
+            visited.push({node: src, parent: parent});
+            src.links.forEach((n) => {
+                if(!this.contains(visited, "node", n)) {
+                    this.depthFirstSearch(n, nodes, visited, src);
+                }
+            });
+
+            return visited;
+        }
+
+        contains(arr, attr, elem){
+            return arr.some((e) => e[attr] == elem);
+        }
     }
 
     class Interface {
