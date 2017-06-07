@@ -251,10 +251,6 @@ class Interface {
     static get qttNodes() {
         return document.querySelector('input[name="nodes"]:checked').value;
     }
-
-    static get qttLinks() {
-        return document.getElementById("additional-nodes").value;
-    }
 }
 
 function exec(){
