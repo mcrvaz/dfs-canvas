@@ -113,7 +113,7 @@ define((require) => {
             * @returns {Node} - Random node from the array.
         */
         getRandomNode(nodes) {
-            return nodes[this.getRandomInt(0, nodes.length)];
+            return nodes[this.getRandomInt(0, nodes.length - 1)];
         }
 
         /**
