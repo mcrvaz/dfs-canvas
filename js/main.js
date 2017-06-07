@@ -1,5 +1,6 @@
 define((require) => {
     const GraphRenderer = require('./renderer.js');
+    const Node = require('./node.js');
 
     /**
         * Main class for executing the depth first search.
@@ -12,7 +13,7 @@ define((require) => {
         constructor(canvas, qttNodes, qttLinks){
             this.canvas = canvas;
             this.context = canvas.getContext("2d");
-            this.canvas.width = 1350;
+            this.canvas.width = 400;
             this.canvas.height = 400;
             this.graphRenderer = new GraphRenderer(this.canvas, this.context, qttNodes, qttLinks);
         }
@@ -22,21 +23,15 @@ define((require) => {
         */
         run(){
             let nodes = this.graphRenderer.generateGraph();
+            let src = this.graphRenderer.getRandomNode(nodes);
+            let dst = this.graphRenderer.getRandomNode(nodes);
+
             this.graphRenderer.initializeClosestNodes(nodes);
             this.graphRenderer.initialDraw(nodes);
-            this.graphRenderer.drawLinks(nodes[0]);
-            this.depthFirstSearch(
-                this.graphRenderer.getRandomNode(nodes),
-                nodes,
-                this.graphRenderer.getRandomNode(nodes)
-            );
-            // this.graphRenderer.paintNodes(nodes, 200);
-        }
 
-        /**
-            * Runs a depth first search.
-        */
-        depthFirstSearch(src, nodes, dst){}
+            this.graphRenderer.paintNode(src, 0, Node.SOURCE);
+            this.graphRenderer.paintNode(dst, 0, Node.DESTINATION);
+        }
 
     }
 

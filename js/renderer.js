@@ -28,16 +28,28 @@ define((require) => {
         }
 
         /**
-            * Redraws the nodes setting their color as active.
-            * @param {Array<Node>} qtt - Nodes to be colored.
+            * Redraws the nodes setting their color to active.
+            * @param {Array<Node>} nodes - Nodes to be colored.
             * @param {number} delay - Delay before coloring the next node.
         */
-        paintNodes(nodes, delay){
+        paintNodes(nodes, delay = 0, color = Node.ACTIVE){
             let i = nodes.length;
             window.interval = setInterval(() => {
-                if(i--) nodes[i].draw(this.canvas, this.context, Node.ACTIVE);
-                else clearInterval(window.interval);
+                if(i--) {
+                    nodes[i].draw(this.canvas, this.context, color);
+                } else {
+                    clearInterval(window.interval);
+                }
             }, delay);
+        }
+
+        /**
+            * Redraws the node setting its color to active.
+            * @param {Node} node - Node to be colored.
+            * @param {number} delay - Delay before coloring the next node.
+        */
+        paintNode(node, delay = 0, color = Node.ACTIVE) {
+            setTimeout(node.draw(this.canvas, this.context, color), delay);
         }
 
         /**

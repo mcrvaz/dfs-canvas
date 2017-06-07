@@ -16,6 +16,10 @@ define((require) => {
 
         static get ACTIVE() { return "green" };
         static get INACTIVE() { return "white" };
+
+        static get SOURCE() { return "blue" };
+        static get DESTINATION() { return "red" };
+
         static get ACTIVE_LINK() { return "blue" };
         static get INACTIVE_LINK() { return "black" };
         /**
