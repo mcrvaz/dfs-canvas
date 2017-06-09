@@ -9,16 +9,18 @@ define((require) => {
         * @param {HTMLCanvasElement} canvas - The main canvas.
         * @param {number} qttNodes - The amount of nodes to render.
         * @param {number} qttLinks - The amount of additional links to render.
+        * @param {boolean} directed - If the graph is directed.
     */
     class Main {
-        constructor(canvas, qttNodes, qttLinks){
+        constructor(canvas, qttNodes, qttLinks, directed){
             this.canvas = canvas;
             this.context = canvas.getContext("2d");
             this.canvas.width = 1200;
             this.canvas.height = 500;
+            this.directed = directed;
             this.context.clearRect(0, 0, canvas.width, canvas.height);
             this.graphRenderer = new GraphRenderer(this.canvas, this.context);
-            this.graphGenerator = new GraphGenerator(qttNodes, qttLinks);
+            this.graphGenerator = new GraphGenerator(qttNodes, qttLinks, directed);
         }
 
         /**
@@ -29,6 +31,22 @@ define((require) => {
             let src = this.graphGenerator.getRandomNode(nodes);
 
             this.graphGenerator.initializeClosestNodes(nodes);
+            this.graphRenderer.initialDraw(nodes);
+
+            this.graphRenderer.paintNode(src, 0, Node.SOURCE);
+
+            let visited = depthFirstSearch(src, nodes, []);
+            this.graphRenderer.paintLinks(visited, 500);
+        }
+
+        /**
+            * Runs the application, drawing the directed graph and executing DFS.
+        */
+        runDirected(){
+            let nodes = this.graphGenerator.generateGraph();
+            let src = this.graphGenerator.getMinimumNode(nodes, "x");
+
+            this.graphGenerator.initializeClosestDirectedNodes(nodes);
             this.graphRenderer.initialDraw(nodes);
 
             this.graphRenderer.paintNode(src, 0, Node.SOURCE);
@@ -50,11 +68,16 @@ define((require) => {
         static get qttNodes() {
             return document.querySelector('input[name="nodes"]:checked').value;
         }
+
+        static get directed() {
+            return document.getElementById('directed').checked;
+        }
     }
 
     function exec(){
-        let main = new Main(Interface.canvas, Interface.qttNodes, Interface.qttLinks);
-        main.run();
+        let main = new Main(Interface.canvas, Interface.qttNodes, Interface.qttLinks, Interface.directed);
+        if(!main.directed) main.run();
+        else main.runDirected();
     }
 
     Interface.setButtonListener(exec);

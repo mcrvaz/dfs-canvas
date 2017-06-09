@@ -12,6 +12,9 @@ define((require) => {
             this.y = y;
             this.radius = radius;
             this.links = [];
+            this.links.pushUnique = function(n) {
+                if(this.indexOf(n) == -1) this.push(n);
+            }
         }
 
         static get ACTIVE() { return "green" };
@@ -22,6 +25,7 @@ define((require) => {
 
         static get ACTIVE_LINK() { return "blue" };
         static get INACTIVE_LINK() { return "black" };
+
         /**
             * Draw the graph in the canvas.
             * @param {HTMLCanvasElement} canvas - The main canvas.
@@ -52,6 +56,31 @@ define((require) => {
             arr = arr.sort((a, b) => this.getDistance(a) > this.getDistance(b) );
             arr.splice(0, 1); //remove self
             this.links = arr.slice(0, amount);
+            return this.links;
+        }
+
+        /**
+            * Gets the closest nodes to this node.
+            * @param {Array<Node>} nodes - Nodes to be searched.
+            * @param {number} amount - Amount of closest nodes to return.
+            * @return {Array<Node>} - Array containing the closest directed nodes.
+        */
+        getClosestDirected(nodes, amount) {
+            let arr = nodes.slice(); //shallow copy
+            arr = arr.sort((a, b) => this.getDistance(a) > this.getDistance(b) );
+            arr.splice(0, 1); //remove self
+            arr = arr.slice(0, amount);
+
+            // n1 -> n2 se n1.x < n2.x
+            // caso contrário n1 <- n2
+            for(let i = 0; i < arr.length - 1; i++){
+                if(arr[i].x > arr[i + 1].x) {
+                    this.links.push(arr[i]);
+                } else {
+                    arr[i + 1].links.pushUnique(arr[i]);
+                }
+            }
+
             return this.links;
         }
 
