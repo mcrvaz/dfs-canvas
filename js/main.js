@@ -1,5 +1,6 @@
 define((require) => {
     const GraphRenderer = require('./renderer.js');
+    const GraphGenerator = require('./generator.js');
     const Node = require('./node.js');
     const depthFirstSearch = require('./dfs.js').depthFirstSearch;
     /**
@@ -16,17 +17,18 @@ define((require) => {
             this.canvas.width = 1200;
             this.canvas.height = 500;
             this.context.clearRect(0, 0, canvas.width, canvas.height);
-            this.graphRenderer = new GraphRenderer(this.canvas, this.context, qttNodes, qttLinks);
+            this.graphRenderer = new GraphRenderer(this.canvas, this.context);
+            this.graphGenerator = new GraphGenerator(qttNodes, qttLinks);
         }
 
         /**
             * Runs the application, drawing the graph and executing DFS.
         */
         run(){
-            let nodes = this.graphRenderer.generateGraph();
-            let src = this.graphRenderer.getRandomNode(nodes);
+            let nodes = this.graphGenerator.generateGraph();
+            let src = this.graphGenerator.getRandomNode(nodes);
 
-            this.graphRenderer.initializeClosestNodes(nodes);
+            this.graphGenerator.initializeClosestNodes(nodes);
             this.graphRenderer.initialDraw(nodes);
 
             this.graphRenderer.paintNode(src, 0, Node.SOURCE);
