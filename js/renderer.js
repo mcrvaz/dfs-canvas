@@ -23,6 +23,7 @@ define((require) => {
 
         /**
             * Renders the nodes in the canvas.
+            * @param {Array<Node>} nodes - Nodes to be rendered.
         */
         initialDraw(nodes) {
             nodes.forEach((n) => { n.draw(this.canvas, this.context, Node.INACTIVE) });
