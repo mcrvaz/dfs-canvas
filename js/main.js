@@ -1,7 +1,7 @@
 define((require) => {
     const GraphRenderer = require('./renderer.js');
     const Node = require('./node.js');
-
+    const depthFirstSearch = require('./dfs.js').depthFirstSearch;
     /**
         * Main class for executing the depth first search.
         * @constructor
@@ -13,8 +13,8 @@ define((require) => {
         constructor(canvas, qttNodes, qttLinks){
             this.canvas = canvas;
             this.context = canvas.getContext("2d");
-            this.canvas.width = 400;
-            this.canvas.height = 400;
+            this.canvas.width = 1200;
+            this.canvas.height = 500;
             this.context.clearRect(0, 0, canvas.width, canvas.height);
             this.graphRenderer = new GraphRenderer(this.canvas, this.context, qttNodes, qttLinks);
         }
@@ -31,23 +31,8 @@ define((require) => {
 
             this.graphRenderer.paintNode(src, 0, Node.SOURCE);
 
-            let visited = this.depthFirstSearch(src, nodes, []);
-            this.graphRenderer.paintLinks(visited, false, 500);
-        }
-
-        depthFirstSearch(src, nodes, visited, parent){
-            visited.push({node: src, parent: parent});
-            src.links.forEach((n) => {
-                if(!this.contains(visited, "node", n)) {
-                    this.depthFirstSearch(n, nodes, visited, src);
-                }
-            });
-
-            return visited;
-        }
-
-        contains(arr, attr, elem){
-            return arr.some((e) => e[attr] == elem);
+            let visited = depthFirstSearch(src, nodes, []);
+            this.graphRenderer.paintLinks(visited, 500);
         }
     }
 

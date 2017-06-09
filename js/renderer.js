@@ -31,11 +31,10 @@ define((require) => {
         /**
             * Draw a link between two nodes.
             * @param {Array<{node, parent}>} nodes - Array with nodes and its parents.
-            * @param {boolean} directed - True if the link should be directed.
             * @param {number} delay - Delay before drawing the link.
             * @param {string} color - Link color.
         */
-        paintLinks(nodes, directed = false, delay = 0, color = Node.ACTIVE_LINK){
+        paintLinks(nodes, delay = 0, color = Node.ACTIVE_LINK){
             let i = 0;
             window.linkInterval = setInterval(() => {
                 if(i++ < nodes.length - 1){
