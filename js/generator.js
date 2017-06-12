@@ -22,11 +22,7 @@ define((require) => {
             * @returns {Array<Node>} - The graph.
         */
         generateGraph(qtt = this.qttNodes){
-            let arr = Array(Number(qtt));
-            for(let i = 0; i < arr.length; i++){
-                arr[i] = (new Node(Math.random(), Math.random()));
-            }
-            return arr;
+            return Array.from(Array(qtt), () => new Node(Math.random(), Math.random()));
         }
 
         /**

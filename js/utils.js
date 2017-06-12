@@ -10,7 +10,6 @@ define((require, exports) => {
         return arr.some((e) => e[attr] == elem);
     }
 
-
     /**
         * Generates a random number inside the defined range.
         * @param {number} min - Minimum value possible.

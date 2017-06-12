@@ -85,22 +85,16 @@ define((require) => {
             let y2 = n2.y * this.canvas.height;
             let angle = Math.atan2(y2 - y1, x2 - x1);
             this.context.moveTo(x2, y2);
-            this.context.lineTo(x2-size*Math.cos(angle-Math.PI/6),y2-size*Math.sin(angle-Math.PI/6));
+            this.context.lineTo(
+                x2 - size * Math.cos(angle - Math.PI/6),
+                y2 - size * Math.sin(angle - Math.PI/6)
+            );
             this.context.moveTo(x2, y2);
-            this.context.lineTo(x2-size*Math.cos(angle+Math.PI/6),y2-size*Math.sin(angle+Math.PI/6));
+            this.context.lineTo(
+                x2 - size * Math.cos(angle + Math.PI/6),
+                y2 - size * Math.sin(angle + Math.PI/6)
+            );
         }
-        // drawArrow(origin, color = Node.ACTIVE_LINK, size = 5){
-        //     let angle = Math.PI/4; //45 degrees
-        //     let x = origin.x * this.canvas.width;
-        //     let y = origin.y * this.canvas.height;
-        //     this.context.beginPath();
-        //     this.context.moveTo(x, y);
-        //     this.context.lineTo(x - size * Math.cos(angle), y - size * Math.sin(angle));
-        //     this.context.moveTo(x, y);
-        //     this.context.lineTo(x + size * Math.cos(angle), y + size * Math.sin(angle));
-        //     this.context.stroke();
-        //     this.context.closePath();
-        // }
 
         /**
             * Redraws the nodes setting their color to active.
