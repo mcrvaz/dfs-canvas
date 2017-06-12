@@ -71,11 +71,11 @@ define((require) => {
             arr.splice(0, 1); //remove self
             arr = arr.slice(0, amount);
 
-            // n1 -> n2 se n1.x < n2.x
-            // caso contrário n1 <- n2
+            // if n1.x < n2.x: n1 -> n2
+            // else: n1 <- n2
             for(let i = 0; i < arr.length - 1; i++){
-                if(arr[i].x > arr[i + 1].x) {
-                    this.links.push(arr[i]);
+                if(arr[i].x < arr[i + 1].x) {
+                    this.links.pushUnique(arr[i]);
                 } else {
                     arr[i + 1].links.pushUnique(arr[i]);
                 }
@@ -86,7 +86,7 @@ define((require) => {
 
         /**
             * Gets the distance between the nodes.
-            * Uses the following formula: sqrt((n1.x – n2.x)^2 + (n1.y – n2.y)^2).
+            * Uses the following formula: sqrt((n1.x – n2.x)^2 + (n1.y – n2.y)^2)
             * @param {Node} node - Node to calculate the distance.
             * @returns {number} - Distance between the nodes.
         */

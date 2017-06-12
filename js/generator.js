@@ -13,7 +13,7 @@ define((require) => {
             this.qttNodes = Number(qttNodes);
             this.qttLinks =  Number(qttLinks);
             //number of links any node must have
-            this.k = Math.trunc(Math.log10(this.qttNodes));
+            this.k = Math.trunc(Math.log2(this.qttNodes));
         }
 
         /**

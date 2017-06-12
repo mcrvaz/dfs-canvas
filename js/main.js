@@ -36,7 +36,7 @@ define((require) => {
             this.graphRenderer.paintNode(src, 0, Node.SOURCE);
 
             let visited = depthFirstSearch(src, nodes, []);
-            this.graphRenderer.paintLinks(visited, 500);
+            this.graphRenderer.paintLinks(visited, false, 500);
         }
 
         /**
@@ -52,7 +52,7 @@ define((require) => {
             this.graphRenderer.paintNode(src, 0, Node.SOURCE);
 
             let visited = depthFirstSearch(src, nodes, []);
-            this.graphRenderer.paintLinks(visited, 500);
+            this.graphRenderer.paintLinks(visited, true, 500);
         }
     }
 
