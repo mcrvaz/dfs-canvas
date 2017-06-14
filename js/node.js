@@ -73,14 +73,13 @@ define((require) => {
 
             // if n1.x < n2.x: n1 -> n2
             // else: n1 <- n2
-            for(let i = 0; i < arr.length - 1; i++){
-                if(arr[i].x < arr[i + 1].x) {
+            for(let i = 0; i < arr.length; i++){
+                if(this.x < arr[i].x) {
                     this.links.pushUnique(arr[i]);
                 } else {
-                    arr[i + 1].links.pushUnique(arr[i]);
+                    arr[i].links.pushUnique(this);
                 }
             }
-
             return this.links;
         }
 
