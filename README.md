@@ -1,2 +1,2 @@
 # dfs-canvas
-Directed and undirected graph first search using HTML5 Canvas for drawing the nodes and links.
+Depth first search for directed and undirected graphs using HTML5 Canvas for drawing the nodes and links.
